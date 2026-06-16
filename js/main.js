@@ -1,5 +1,5 @@
 // ===================================================
-// MOLLEBAMBA — Tesoro Andino | Main v2.0
+// MOLLEBAMBA — Tesoro Andino | Main v2.1
 // ===================================================
 
 /* ─── UTILIDADES ─────────────────────────────────── */
@@ -258,16 +258,26 @@ function initBtnArriba() {
   });
 }
 
-/* ─── HERO PARALLAX ──────────────────────────────── */
+/* ─── HERO PARALLAX (CORREGIDO) ──────────────────── */
 
 function initHeroParallax() {
   const bg = qs('.hero-bg');
   if (!bg || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  // Inicialmente no hay escala extra, solo movimiento vertical ligero
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    const offset = window.scrollY;
-    if (offset < window.innerHeight) {
-      bg.style.transform = `scale(1.05) translateY(${offset * 0.25}px)`;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        const offset = window.scrollY;
+        if (offset < window.innerHeight * 1.2) {
+          // Movimiento suave sin modificar escala
+          const y = offset * 0.15;
+          bg.style.transform = `translateY(${y}px)`;
+        }
+        ticking = false;
+      });
+      ticking = true;
     }
   }, { passive: true });
 }
@@ -279,7 +289,7 @@ function animateCounter(element, end, duration = 1500) {
   const step = (timestamp) => {
     if (!start) start = timestamp;
     const progress = Math.min((timestamp - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
     element.textContent = Math.floor(eased * end);
     if (progress < 1) requestAnimationFrame(step);
   };
@@ -327,18 +337,17 @@ function initFormulario() {
     if (!btn) return;
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Enviando...';
     btn.disabled = true;
-    // Dejar que Formspree maneje el envío normal
   });
 }
 
-/* ─── HERO BG: entrada suave ─────────────────────── */
+/* ─── HERO BG (CORREGIDO) ────────────────────────── */
 
 function initHeroBg() {
   const bg = qs('.hero-bg');
   if (!bg) return;
-  setTimeout(() => {
-    bg.style.transform = 'scale(1)';
-  }, 100);
+  // Ya no es necesario cambiar la escala, porque empezamos con scale(1)
+  // Solo nos aseguramos de que la imagen esté visible
+  bg.style.opacity = '1';
 }
 
 /* ─── INIT ───────────────────────────────────────── */
@@ -363,12 +372,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initLoading();
   initNavbar();
   initBtnArriba();
-  initHeroParallax();
-  initHeroBg();
+  initHeroParallax();   // ← parallax más suave y sin scale
+  initHeroBg();         // ← ya no cambia scale, solo se asegura visibilidad
   initCounters();
   initLightbox();
   initFormulario();
 
-  // Reveal global (secciones que no son grids)
+  // Reveal global
   observeReveal(document);
 });
