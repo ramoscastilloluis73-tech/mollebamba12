@@ -1,5 +1,5 @@
 /* ===================================================
-   MOLLEBAMBA — Tesoro Andino | Stylesheet v2.1
+   MOLLEBAMBA — Tesoro Andino | Stylesheet v2.2
    Diseño: Luis Ramos Castillo
    =================================================== */
 
@@ -8,7 +8,6 @@
 
 /* ===== DESIGN TOKENS ===== */
 :root {
-  /* Palette */
   --color-tierra:      #0D3B1E;
   --color-tierra-md:   #1A5C32;
   --color-tierra-lt:   #2A7D48;
@@ -22,31 +21,26 @@
   --color-gris-lt:     #E5E7EB;
   --color-blanco:      #FFFFFF;
 
-  /* Typography */
   --font-display: 'Playfair Display', Georgia, serif;
   --font-serif:   'DM Serif Display', Georgia, serif;
   --font-body:    'DM Sans', system-ui, sans-serif;
 
-  /* Spacing */
   --space-xs:  0.5rem;
   --space-sm:  1rem;
   --space-md:  2rem;
   --space-lg:  4rem;
   --space-xl:  7rem;
 
-  /* Radius */
   --radius-sm: 0.5rem;
   --radius-md: 1rem;
   --radius-lg: 2rem;
   --radius-xl: 3rem;
 
-  /* Shadows */
   --shadow-sm:  0 2px 8px rgba(0,0,0,0.06);
   --shadow-md:  0 8px 30px rgba(0,0,0,0.10);
   --shadow-lg:  0 20px 60px rgba(0,0,0,0.15);
   --shadow-card:0 4px 20px rgba(13,59,30,0.12);
 
-  /* Transitions */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --t-fast: 0.2s var(--ease);
   --t-base: 0.35s var(--ease);
@@ -279,7 +273,7 @@ nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: visible; /* ← CAMBIADO: ya no oculta el texto */
+  overflow: visible;
   background: var(--color-tierra);
 }
 
@@ -289,9 +283,11 @@ nav {
   background-image: url('../imagenes/imagen03.png');
   background-size: cover;
   background-position: center 30%;
-  transform: scale(1); /* ← CAMBIADO: ya no empieza con zoom */
-  transition: transform 1s ease-out; /* ← CAMBIADO: de 8s a 1s */
+  background-attachment: fixed; /* ← IMAGEN ESTÁTICA (no se mueve) */
+  transform: none; /* ← Sin transformaciones */
+  transition: none; /* ← Sin transiciones */
   opacity: 1;
+  will-change: auto;
 }
 
 .hero-bg::after {
@@ -310,7 +306,7 @@ nav {
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: var(--space-md) var(--space-sm); /* ← AÑADIDO: padding lateral en móvil */
+  padding: var(--space-md) var(--space-sm);
   max-width: 860px;
   width: 100%;
 }
@@ -322,7 +318,7 @@ nav {
   background: rgba(232,160,42,0.15);
   border: 1px solid rgba(232,160,42,0.4);
   color: var(--color-oro-lt);
-  font-size: 0.75rem;
+  font-size: clamp(0.65rem, 2vw, 0.75rem);
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -336,23 +332,26 @@ nav {
   font-size: 0.8rem;
 }
 
+/* ===== TÍTULO PRINCIPAL — ADAPTABLE ===== */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-size: clamp(3rem, 15vw, 8rem); /* ← responsive */
   font-weight: 900;
-  line-height: 1.1; /* ← CAMBIADO: de 0.9 a 1.1 para evitar corte */
-  letter-spacing: -0.03em;
+  line-height: 1; /* ← sin overflow */
+  letter-spacing: -0.02em;
   background: linear-gradient(135deg, #fff 30%, var(--color-oro) 70%, var(--color-oro-lt) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin-bottom: 1.25rem;
-  overflow: visible; /* ← AÑADIDO: asegura que no se recorte */
+  overflow: visible;
+  word-break: break-word;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.15);
 }
 
 .hero-subtitle {
   font-family: var(--font-serif);
-  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.35rem);
   font-style: italic;
   color: rgba(255,255,255,0.8);
   margin-bottom: 0.75rem;
@@ -361,7 +360,7 @@ nav {
 
 .hero-description {
   color: rgba(255,255,255,0.65);
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
   max-width: 520px;
   margin: 0 auto 2.5rem;
   line-height: 1.8;
@@ -499,13 +498,15 @@ nav {
   color: var(--color-blanco);
 }
 
-/* ===== CLIP-PATH: desactivado en móvil ===== */
+/* ===== CLIP-PATH: desactivado por defecto ===== */
 .section--clip-top,
 .section--clip-both {
-  clip-path: none; /* ← CAMBIADO: por defecto sin clip, para que no rompa */
+  clip-path: none;
+  margin: 0;
+  padding: var(--space-xl) var(--space-md);
 }
 
-/* Solo en pantallas grandes (>= 1024px) se aplica el clip-path original */
+/* Solo en pantallas grandes */
 @media (min-width: 1024px) {
   .section--clip-top {
     clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%);
@@ -548,7 +549,7 @@ nav {
 
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.8rem, 5vw, 3rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -585,9 +586,9 @@ nav {
   gap: 1.5rem;
 }
 
-.grid--2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-.grid--3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-.grid--4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.grid--3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.grid--4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 
 .card {
   background: var(--color-blanco);
@@ -870,7 +871,7 @@ nav {
 /* ===== CALENDARIO ===== */
 .calendario-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.25rem;
 }
 
@@ -1331,7 +1332,7 @@ nav {
 /* ===== DATOS PRÁCTICOS ===== */
 .practicos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.25rem;
 }
 
