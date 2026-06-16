@@ -1,5 +1,5 @@
 /* ===================================================
-   MOLLEBAMBA — Tesoro Andino | Stylesheet v2.0
+   MOLLEBAMBA — Tesoro Andino | Stylesheet v2.1
    Diseño: Luis Ramos Castillo
    =================================================== */
 
@@ -279,7 +279,7 @@ nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible; /* ← CAMBIADO: ya no oculta el texto */
   background: var(--color-tierra);
 }
 
@@ -289,8 +289,9 @@ nav {
   background-image: url('../imagenes/imagen03.png');
   background-size: cover;
   background-position: center 30%;
-  transform: scale(1.05);
-  transition: transform 8s ease-out;
+  transform: scale(1); /* ← CAMBIADO: ya no empieza con zoom */
+  transition: transform 1s ease-out; /* ← CAMBIADO: de 8s a 1s */
+  opacity: 1;
 }
 
 .hero-bg::after {
@@ -309,8 +310,9 @@ nav {
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-sm); /* ← AÑADIDO: padding lateral en móvil */
   max-width: 860px;
+  width: 100%;
 }
 
 .hero-badge {
@@ -338,13 +340,14 @@ nav {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 11vw, 8rem);
   font-weight: 900;
-  line-height: 0.9;
+  line-height: 1.1; /* ← CAMBIADO: de 0.9 a 1.1 para evitar corte */
   letter-spacing: -0.03em;
   background: linear-gradient(135deg, #fff 30%, var(--color-oro) 70%, var(--color-oro-lt) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin-bottom: 1.25rem;
+  overflow: visible; /* ← AÑADIDO: asegura que no se recorte */
 }
 
 .hero-subtitle {
@@ -496,19 +499,26 @@ nav {
   color: var(--color-blanco);
 }
 
-/* Diagonal clip para secciones */
-.section--clip-top {
-  clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%);
-  margin-top: -60px;
-  padding-top: calc(var(--space-xl) + 60px);
+/* ===== CLIP-PATH: desactivado en móvil ===== */
+.section--clip-top,
+.section--clip-both {
+  clip-path: none; /* ← CAMBIADO: por defecto sin clip, para que no rompa */
 }
 
-.section--clip-both {
-  clip-path: polygon(0 60px, 100% 0, 100% calc(100% - 60px), 0 100%);
-  margin-top: -60px;
-  margin-bottom: -60px;
-  padding-top: calc(var(--space-xl) + 60px);
-  padding-bottom: calc(var(--space-xl) + 60px);
+/* Solo en pantallas grandes (>= 1024px) se aplica el clip-path original */
+@media (min-width: 1024px) {
+  .section--clip-top {
+    clip-path: polygon(0 60px, 100% 0, 100% 100%, 0 100%);
+    margin-top: -60px;
+    padding-top: calc(var(--space-xl) + 60px);
+  }
+  .section--clip-both {
+    clip-path: polygon(0 60px, 100% 0, 100% calc(100% - 60px), 0 100%);
+    margin-top: -60px;
+    margin-bottom: -60px;
+    padding-top: calc(var(--space-xl) + 60px);
+    padding-bottom: calc(var(--space-xl) + 60px);
+  }
 }
 
 /* ===== SECTION HEADER ===== */
