@@ -1,5 +1,6 @@
 // ===================================================
-// MOLLEBAMBA — Tesoro Andino | Main v2.1
+// MOLLEBAMBA — Tesoro Andino | Main v2.2
+// Responsive update
 // ===================================================
 
 /* ─── UTILIDADES ─────────────────────────────────── */
@@ -35,7 +36,7 @@ function renderCards(containerId, items) {
 
     const mediaHtml = imgSrc
       ? `<div class="card__media">
-           <img src="${imgSrc}" alt="${nombre}" loading="lazy">
+           <img src="${imgSrc}" alt="${nombre}" loading="lazy" ${imgFallback(imgSrc)}>
            <div class="card__media-overlay"></div>
            ${tag ? `<span class="card__tag">${tag}</span>` : ''}
          </div>`
@@ -212,18 +213,36 @@ function initNavbar() {
   const navLinks = qs('.nav-links');
   if (!menuIcon || !navLinks) return;
 
-  menuIcon.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
+  function setMenuState(open) {
+    navLinks.classList.toggle('active', open);
+    menuIcon.setAttribute('aria-expanded', open ? 'true' : 'false');
     const bars = qsa('span', menuIcon);
-    bars[0]?.style.setProperty('transform', navLinks.classList.contains('active') ? 'rotate(45deg) translate(5px, 5px)' : '');
-    bars[1]?.style.setProperty('opacity',   navLinks.classList.contains('active') ? '0' : '1');
-    bars[2]?.style.setProperty('transform', navLinks.classList.contains('active') ? 'rotate(-45deg) translate(5px, -5px)' : '');
+    bars[0]?.style.setProperty('transform', open ? 'rotate(45deg) translate(5px, 5px)' : '');
+    bars[1]?.style.setProperty('opacity',   open ? '0' : '1');
+    bars[2]?.style.setProperty('transform', open ? 'rotate(-45deg) translate(5px, -5px)' : '');
+  }
+
+  menuIcon.addEventListener('click', () => {
+    setMenuState(!navLinks.classList.contains('active'));
   });
 
   qsa('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('active');
-    });
+    link.addEventListener('click', () => setMenuState(false));
+  });
+
+  // Cerrar el menú al tocar/clicar fuera de él (útil en móvil)
+  document.addEventListener('click', (e) => {
+    const isOpen = navLinks.classList.contains('active');
+    if (!isOpen) return;
+    const clickedInsideMenu = navLinks.contains(e.target) || menuIcon.contains(e.target);
+    if (!clickedInsideMenu) setMenuState(false);
+  });
+
+  // Cerrar el menú si la ventana pasa a tamaño de escritorio
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && navLinks.classList.contains('active')) {
+      setMenuState(false);
+    }
   });
 
   // Highlight activo en scroll
@@ -264,14 +283,17 @@ function initHeroParallax() {
   const bg = qs('.hero-bg');
   if (!bg || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Inicialmente no hay escala extra, solo movimiento vertical ligero
+  // Desactivar parallax en pantallas táctiles pequeñas para evitar
+  // saltos visuales al hacer scroll con barra de direcciones móvil
+  const isSmallTouch = window.matchMedia('(hover: none) and (max-width: 768px)').matches;
+  if (isSmallTouch) return;
+
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!ticking) {
       window.requestAnimationFrame(() => {
         const offset = window.scrollY;
         if (offset < window.innerHeight * 1.2) {
-          // Movimiento suave sin modificar escala
           const y = offset * 0.15;
           bg.style.transform = `translateY(${y}px)`;
         }
@@ -350,6 +372,19 @@ function initHeroBg() {
   bg.style.opacity = '1';
 }
 
+/* ─── VIEWPORT HEIGHT FIX (barras móviles) ───────── */
+
+function initViewportHeightFix() {
+  // Algunos navegadores móviles recalculan 100vh al mostrar/ocultar
+  // la barra de direcciones. Esto fija una variable --vh estable.
+  function setVH() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  }
+  setVH();
+  window.addEventListener('resize', setVH);
+  window.addEventListener('orientationchange', setVH);
+}
+
 /* ─── INIT ───────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -372,11 +407,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initLoading();
   initNavbar();
   initBtnArriba();
-  initHeroParallax();   // ← parallax más suave y sin scale
-  initHeroBg();         // ← ya no cambia scale, solo se asegura visibilidad
+  initHeroParallax();
+  initHeroBg();
   initCounters();
   initLightbox();
   initFormulario();
+  initViewportHeightFix();
 
   // Reveal global
   observeReveal(document);
