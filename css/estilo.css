@@ -386,6 +386,7 @@ header#inicio {
   padding: var(--space-md) var(--space-sm);
   max-width: 860px;
   width: 100%;
+  margin: 0 auto;
 }
 
 .hero-badge {
@@ -421,8 +422,7 @@ header#inicio {
 
 .hero-title {
   font-family: var(--font-display);
-  /* Valores reducidos al 50% de los originales */
-  font-size: clamp(1.375rem, 6.5vw, 4rem);
+  font-size: clamp(2.5rem, 9vw, 6.5rem);
   font-weight: 900;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -433,6 +433,18 @@ header#inicio {
   margin-bottom: 1.25rem;
   overflow: visible;
   word-break: keep-all;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+}
+
+/* Pantallas muy angostas: permitir que el título reduzca aún más
+   en lugar de desbordarse, manteniendo todo en una sola línea */
+@media (max-width: 380px) {
+  .hero-title {
+    font-size: clamp(2.1rem, 11vw, 3rem);
+    letter-spacing: -0.01em;
+  }
 }
 
 .hero-subtitle {
